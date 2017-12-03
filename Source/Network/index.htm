@@ -1,0 +1,194 @@
+<html>
+<style>
+form {
+  /* Just to center the form on the page */
+  margin: 0 auto;
+  width: 400px;
+  /* To see the outline of the form */
+  padding: 1em;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+}
+
+form div + div {
+  margin-top: 1em;
+}
+
+label {
+  /* To make sure that all labels have the same size and are properly aligned */
+  display: inline-block;
+  width: 90px;
+  text-align: right;
+}
+
+input, textarea {
+  /* To make sure that all text fields have the same font settings
+     By default, textareas have a monospace font */
+  font: 1em sans-serif;
+
+  /* To give the same size to all text fields */
+  width: 300px;
+  box-sizing: border-box;
+
+  /* To harmonize the look & feel of text field border */
+  border: 1px solid #999;
+}
+
+input:focus, textarea:focus {
+  /* To give a little highlight on active elements */
+  border-color: #000;
+}
+
+textarea {
+  /* To properly align multiline text fields with their labels */
+  vertical-align: top;
+
+  /* To give enough room to type some text */
+  height: 5em;
+}
+
+.button {
+  /* To position the buttons to the same position of the text fields */
+  padding-left: 90px; /* same size as the label elements */
+}
+
+button {
+  /* This extra margin represent roughly the same space as the space
+     between the labels and their text fields */
+  margin-left: .5em;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script>
+function onSubmitForm( form ) {
+	var obj = {};
+	var elements = form.querySelectorAll( "input, select, textarea, checkbox" );
+	for( var i = 0; i < elements.length; ++i ) {
+		var element = elements[i];
+		var name = element.name;
+		var value = element.type=='checkbox' ? element.checked : element.value;
+
+		if( name ) {
+			obj[ name ] = value;
+		}
+	}
+	
+	alert(JSON.stringify(obj));
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open(form.method, form.action, true);
+	xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+	// send the collected data as JSON
+	xhr.send(JSON.stringify(obj));
+	
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState != 4) return;
+
+		if (xhr.status != 200) {
+			alert(xhr.status + ': ' + xhr.statusText);
+		} else {
+			alert(xhr.responseText);
+		}
+	}
+}
+function loadPage() {
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open("get", "/WebServerConfig", false);
+	xhr.send();
+	
+	if (xhr.status != 200) {
+		document.getElementById('info').value = xhr.status + ': ' + xhr.statusText;
+	} else {
+		var config = JSON.parse(xhr.responseText);
+		
+		document.getElementById('ip_config').value = config.ip;
+		alert("ip: " + config.ip);
+		document.getElementById('port_config').value = config.port;
+		alert("port: " + config.port);
+		document.getElementById('gateway_config').value = config.gateway;
+		alert("gateway: " + config.gateway);
+		document.getElementById('submask_config').value = config.submask;
+		alert("submask: " + config.submask);
+		document.getElementById('dns_config').value = config.dns;
+		alert("dns: " + config.dns);
+		document.getElementById('dns2_config').value = config.dns2;
+		alert("dns2: " + config.dns2);
+		document.getElementById('host_config').value = config.host;
+		alert("host: " + config.host);
+		document.getElementById('dhcp_config').value = config.dhcp=="true"?"true":"false";
+		alert("dhcp: " + config.dhcp);
+		document.getElementById('ssid_config').value = config.ssid;
+		alert("ssid: " + config.ssid);
+		document.getElementById('pswd_config').value = config.pswd;
+		alert("pswd: " + config.pswd);
+	}
+}
+</script>
+
+<body onload="loadPage()">
+<div>
+NIBE heatpump - Network configuration
+</div>
+
+<br>
+<a href="javascript:history.back()">Go Back</a>
+<br>
+
+<form action="/UpdateConfig" method="post" onsubmit='event.preventDefault(); onSubmitForm(this)'>
+	<div name="info"></div>
+	<div>
+        <label for="ip_config">IP:</label>
+        <input type="text" id="ip_config" name="ip">
+    </div>
+	<div>
+        <label for="port_config">Port:</label>
+        <input type="text" id="port_config" name="port">
+    </div>
+    <div>
+        <label for="gateway_config">Gateway:</label>
+        <input type="text" id="gateway_config" name="gateway">
+    </div>
+    <div>
+        <label for="submask_config">Submask:</label>
+        <input type="text" id="submask_config" name="submask">
+    </div>
+	<div>
+        <label for="dns_config">DNS:</label>
+        <input type="text" id="dns_config" name="dns">
+    </div>
+	<div>
+        <label for="dns2_config">DNS 2:</label>
+        <input type="text" id="dns2_config" name="dns2">
+    </div>
+	<div>
+        <label for="host_config">Host:</label>
+        <input type="text" id="host_config" name="host">
+    </div>
+	<div>
+        <label for="dhcp_config">DHCP:</label>
+        <input type="checkbox" id="dhcp_config" name="dhcp">
+    </div>
+	<div>
+        <label for="ssid_config">SSID:</label>
+        <input type="text" id="ssid_config" name="ssid">
+    </div>
+    <div>
+        <label for="pswd_config">Password:</label>
+        <input type="password" id="pswd_config" name="pswd">
+    </div>
+	
+	<div class="button">
+	  <button type="submit">Update configuration</button>
+	</div>
+</form>
+<br>
+
+<!--footer-->
+<div>
+Copyright (c) MakHome Entertainment 2017
+</div>
+</body>
+</html>
