@@ -1,19 +1,29 @@
-//import HtmlService from '../servisces/htmlService';
+window.configController = function() {
 
-export default class ConfigController{
-    getHomeView(){
-        this.renderView(HtmlService.configurationView());
-    }
+    function getHomeView(){
+        renderView(window.htmlService.homeView());
+    };
 
-    getConfigurationView(){
-         this.renderView(HtmlService.configurationView());
-    }
+    function getConfigurationView(){
+         renderView(window.htmlService.configurationView());
+    };
 
-    renderView(view) {
-        let container = document.getElementById('page-content');
-        if (container) {
-            container.innerHTML = '';
-            container.appendChild(view);
+    function postConfiguration(data){
+
+    };
+
+    function renderView(view) {        
+        var container = $( "#page-content" );
+        if (container) {            
+            container.html("");
+            container.append(view);
         }
+    };
+
+    // Expose API
+    return {
+        getHomeView: getHomeView,
+        getConfigurationView: getConfigurationView,
+        postConfiguration: postConfiguration
     }
-}
+}();
